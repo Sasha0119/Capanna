@@ -70,7 +70,8 @@ header {
 }
 
 header.sticky {
-  background: #000;
+  background: transparent;
+  color: black;
 }
 
 .logo img {
@@ -147,10 +148,6 @@ header.sticky {
   min-height: 100vh;
 }
 
-#showcase .content img {
-  display: none; /* Remove the image since we're using background */
-}
-
 #showcase .content h2 {
   font-size: 7rem;
   font-family: var(--righteous);
@@ -170,6 +167,7 @@ header.sticky {
 /* Special Offer */
 #sp_offer {
   padding: 10rem 0;
+  background-color: wheat;
 }
 
 .sp_content {
