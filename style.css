@@ -207,7 +207,7 @@ header .sticky {
 .imgs img {
   display: block;
   object-fit: cover;
-  /* width: 50%; */
+  width: 50%; 
 }
 
 .content_for_img {
@@ -275,7 +275,7 @@ header .sticky {
 /* Reservation Now Start  */
 
 #reservation_tbl {
-  /* background: url(); */
+  background: url();
   background-attachment: fixed;
   padding: 6rem 0;
 }
@@ -327,7 +327,7 @@ header .sticky {
 /* Deal Today Start  */
 #deal_today {
   padding: 10rem 0;
-  /* background: url(); */
+  background: url(); 
 }
 
 
@@ -426,7 +426,7 @@ header .sticky {
 
 #customer_feedback {
   padding: 10rem 0;
-  /* background: url("../imgs/customer_feedback_img.jpg") no-repeat; */
+  background: url("../imgs/customer_feedback_img.jpg") no-repeat; 
   background-attachment: fixed;
   position: relative;
   z-index: -1;
@@ -479,7 +479,7 @@ header .sticky {
 /* -------- Upcoming events start -------- */
 
 #up_coming_events {
-  /* background: url("../imgs/up_coming_event_img.png") no-repeat; */
+  background: url("../imgs/up_coming_event_img.png") no-repeat; 
   padding: 10rem 0;
 }
 
@@ -521,7 +521,7 @@ header .sticky {
 
 
 #static_counter {
-  /* background: url('../imgs/static_counter_img.jpg') no-repeat center center/cover; */
+  background: url('../imgs/static_counter_img.jpg') no-repeat center center/cover; 
   padding: 10rem 0;
   position: relative;
   z-index: -1;
@@ -647,3 +647,4 @@ header .sticky {
   color: var(--white_color);
 }
 /* -------- Footer close -------- */
+
