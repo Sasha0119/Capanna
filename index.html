@@ -1,17 +1,899 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Capanna Restaurant</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="responsive.css">
-
-  <!-- Correct Font Awesome & Swiper -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"/>
+
+  <!-- Leaflet for map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+  <!-- Styles -->
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      line-height: 1.6;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h2, h3, h4 {
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Button Styles */
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Header Styles */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 50px;
+    }
+
+    nav {
+      display: flex;
+    }
+
+    nav li {
+      display: inline-block;
+      margin-left: 25px;
+      list-style: none;
+    }
+
+    nav li a {
+      color: #fff;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    nav li a:hover {
+      color: #c9a96e;
+    }
+
+    .btn {
+      display: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* Showcase Styles */
+    #showcase {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #showcase img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    #showcase::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    .content h2 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .content h3 {
+      font-size: 24px;
+      font-weight: 300;
+    }
+
+    /* Special Offer Styles */
+    #sp_offer {
+      padding: 80px 0;
+      background-color: #f9f9f9;
+    }
+
+    .sp_content {
+      display: flex;
+      gap: 40px;
+    }
+
+    .left_side_content {
+      flex: 1;
+    }
+
+    .headings h3 {
+      font-size: 18px;
+      color: #c9a96e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .headings h2 {
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+
+    .imgs_content {
+      display: flex;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+
+    .imgs {
+      display: flex;
+      flex: 1;
+      gap: 15px;
+    }
+
+    .imgs img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .content_for_img h4 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .content_for_img p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #c9a96e;
+    }
+
+    .right_side_content {
+      flex: 1;
+      position: relative;
+    }
+
+    .img_right_side img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .over_img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .over_img:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .over_img h2 {
+      color: #fff;
+      font-size: 32px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Reservation Styles */
+    #reservation_tbl {
+      padding: 80px 0;
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .form_data {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .normal_heading {
+      font-size: 18px;
+      color: #c9a96e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .main_heading {
+      font-size: 36px;
+      margin-bottom: 40px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #444;
+      background-color: #2a2a2a;
+      color: #fff;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #aaa;
+    }
+
+    textarea {
+      grid-column: 1 / span 2;
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button[type="submit"] {
+      grid-column: 1 / span 2;
+      padding: 15px;
+      background-color: #c9a96e;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #b89454;
+    }
+
+    /* Food Lover Styles */
+    #food_lover {
+      padding: 80px 0;
+      background-color: #f9f9f9;
+    }
+
+    .normal_heading-1 {
+      font-size: 18px;
+      color: #c9a96e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .main_heading-1 {
+      font-size: 36px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .btn_container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+
+    .btn-cat {
+      padding: 10px 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-cat:hover, .btn-cat.active {
+      background-color: #c9a96e;
+      color: #fff;
+      border-color: #c9a96e;
+    }
+
+    .menus_items_container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .img_cards {
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      background-color: #fff;
+    }
+
+    .img_cards:hover {
+      transform: translateY(-10px);
+    }
+
+    .img_cards img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .img_cards .price {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #c9a96e;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .img_cards p {
+      padding: 10px 15px;
+      background-color: #fff;
+    }
+
+    .img_cards p:first-of-type:not(.price) {
+      font-weight: bold;
+      font-size: 18px;
+      padding-bottom: 5px;
+    }
+
+    .img_cards p:last-child {
+      padding-top: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    /* Footer Styles */
+    #footer {
+      padding: 80px 0 40px;
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .footer_container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .about_us img {
+      height: 50px;
+      margin-bottom: 20px;
+    }
+
+    .about_us p {
+      color: #aaa;
+      line-height: 1.8;
+    }
+
+    .about_us a {
+      color: #c9a96e;
+    }
+
+    .opening_hours h2, .contact_us h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .contact_us h3 {
+      font-size: 18px;
+      color: #c9a96e;
+      margin-bottom: 15px;
+    }
+
+    .opening_hours p, .contact_us p {
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .opening_hours span {
+      color: #fff;
+    }
+
+    .contact_us a {
+      color: #c9a96e;
+    }
+
+    footer {
+      padding: 20px 0;
+      background-color: #111;
+      color: #aaa;
+      text-align: center;
+    }
+
+    footer a {
+      color: #c9a96e;
+    }
+
+    /* Message Styles */
+    .message {
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .sp_content {
+        flex-direction: column;
+      }
+      
+      .right_side_content {
+        margin-top: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .btn {
+        display: block;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 250px;
+        height: 100vh;
+        background-color: #1a1a1a;
+        flex-direction: column;
+        padding-top: 80px;
+        transition: right 0.5s ease;
+        z-index: 1001;
+      }
+
+      nav.active {
+        right: 0;
+      }
+
+      nav li {
+        display: block;
+        margin: 15px 0;
+        text-align: center;
+      }
+
+      .content h2 {
+        font-size: 36px;
+      }
+
+      .content h3 {
+        font-size: 20px;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      textarea, button[type="submit"] {
+        grid-column: 1;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content h2 {
+        font-size: 28px;
+      }
+
+      .content h3 {
+        font-size: 18px;
+      }
+
+      .headings h2, .main_heading, .main_heading-1 {
+        font-size: 28px;
+      }
+
+      .imgs_content {
+        flex-direction: column;
+      }
+
+      .price {
+        margin-top: 10px;
+      }
+    }
+
+    /* Order section styles */
+    .order-section { 
+      padding: 60px 0; 
+      background: #fff; 
+    }
+    
+    .order-wrapper { 
+      display: grid; 
+      grid-template-columns: 1fr 420px; 
+      gap: 28px; 
+      align-items: start; 
+    }
+    
+    .catalog-intro { 
+      margin-bottom: 12px; 
+      font-weight: 600; 
+      color: #333; 
+    }
+    
+    .delivery-info { 
+      margin-bottom: 20px; 
+      padding: 15px; 
+      background: #f8f8f8; 
+      border-radius: 8px; 
+    }
+    
+    .delivery-info h4 { 
+      margin-bottom: 10px; 
+      font-size: 18px; 
+      font-weight: 700; 
+    }
+    
+    .delivery-info p { 
+      margin: 5px 0; 
+      color: #444; 
+    }
+
+    /* Categories / dishes */
+    .order-category { 
+      margin-bottom: 14px; 
+    }
+    
+    .cat-toggle { 
+      width: 100%; 
+      text-align: left; 
+      font-weight: 700; 
+      padding: 10px 12px; 
+      border-radius: 8px; 
+      border: 1px solid #eee; 
+      background: #fff; 
+      cursor: pointer; 
+      margin-bottom: 8px; 
+    }
+    
+    .cat-items { 
+      padding: 6px 6px 14px 6px; 
+      display: none; 
+      border-left: 3px solid rgba(0,0,0,0.04); 
+      margin-bottom: 12px; 
+    }
+
+    /* Dish blocks */
+    .dish { 
+      margin-bottom: 10px; 
+    }
+    
+    .dish-toggle { 
+      width: 100%; 
+      text-align: left; 
+      font-weight: 600; 
+      padding: 8px 10px; 
+      border-radius: 6px; 
+      border: 1px dashed #ddd; 
+      background: #fff; 
+      cursor: pointer; 
+      margin-bottom: 6px; 
+    }
+    
+    .dish-options { 
+      display: none; 
+      padding-left: 6px; 
+      margin-bottom: 8px; 
+    }
+    
+    .dish-options label { 
+      display: block; 
+      padding: 6px 8px; 
+      background: #fafafa; 
+      border-radius: 6px; 
+      margin-bottom: 6px; 
+      cursor: pointer; 
+      color: #222; 
+    }
+
+    /* Single dish line */
+    .dish-single { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      gap: 10px; 
+      padding: 8px 10px; 
+      background: #fff; 
+      border-radius: 6px; 
+      margin-bottom: 8px; 
+      border: 1px solid #eee;
+    }
+    
+    .dish-single input[type="number"], .dish-options .item-qty { 
+      width: 76px; 
+      padding: 6px; 
+      border-radius: 6px; 
+      border: 1px solid #ddd; 
+    }
+
+    /* Form card */
+    .order-form-card { 
+      background: #1a1a1a; 
+      color: #fff; 
+      padding: 18px; 
+      border-radius: 8px; 
+    }
+    
+    .input { 
+      width: 100%; 
+      padding: 10px; 
+      margin-bottom: 10px; 
+      border-radius: 6px; 
+      border: 1px solid #444; 
+      background: #2a2a2a; 
+      color: #fff; 
+    }
+    
+    .textarea { 
+      width: 100%; 
+      padding: 10px; 
+      border-radius: 6px; 
+      border: 1px solid #444; 
+      background: #2a2a2a; 
+      color: #fff; 
+      min-height: 80px; 
+      margin-bottom: 12px; 
+    }
+
+    /* Radio */
+    .order-type { 
+      display: flex; 
+      gap: 14px; 
+      margin-bottom: 12px; 
+    }
+    
+    .radio { 
+      background: #222; 
+      padding: 8px 10px; 
+      border-radius: 8px; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+      border: 1px solid transparent; 
+    }
+    
+    .radio input { 
+      transform: translateY(2px); 
+    }
+
+    /* Map */
+    #map-wrap { 
+      margin-bottom: 12px; 
+    }
+    
+    .map-box { 
+      height: 220px; 
+      border-radius: 8px; 
+      overflow: hidden; 
+      margin-bottom: 8px; 
+      border: 1px solid #333; 
+    }
+    
+    .map-actions { 
+      display: flex; 
+      gap: 8px; 
+      margin-bottom: 8px; 
+    }
+    
+    .btn { 
+      padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+    }
+    .btn.primary {
+  background-color: #ff5a00;
+  color: #fff;
+}
+.btn.primary:hover {
+  background-color: #e04e00;
+}
+    .btn.ghost { 
+     background-color: transparent;
+  border: 2px solid #ff5a00;
+  color: #ff5a00;
+    }
+    .btn.ghost:hover {
+  background-color: #ff5a00;
+  color: #fff;
+}
+    
+    .btn.small { 
+       padding: 5px 12px;
+  font-size: 0.9rem;
+    }
+    
+    .btn.primary { 
+      background: #c9a96e; 
+      color:    white; 
+      font-weight: 700; 
+      width: 100%; 
+      margin-top: 6px; 
+      font-size: 16px; 
+      visibility: visible; 
+    }
+
+    /* Spinner for submit button */
+    .spinner { 
+      display: inline-block; 
+      width: 16px; 
+      height: 16px; 
+      border: 2px solid #fff; 
+      border-top-color: transparent; 
+      border-radius: 50%; 
+      animation: spin 1s linear infinite; 
+    }
+    
+    @keyframes spin { 
+      to { transform: rotate(360deg); } 
+    }
+
+    /* Summary and messages */
+    .summary { 
+      background: #111; 
+      padding: 10px; 
+      border-radius: 8px; 
+      margin-bottom: 10px; 
+      color: #ddd; 
+      display: flex; 
+      justify-content: space-between; 
+    }
+    
+    .form-message { 
+      min-height: 36px; 
+      margin-bottom: 10px; 
+      color: #fff; 
+    }
+    
+    .form-message.message { 
+      padding: 8px; 
+      border-radius: 6px; 
+      font-weight: 600; 
+    }
+    
+    .form-message.message.success { 
+      background: #d4edda; 
+      color: #155724; 
+      border: 1px solid #c3e6cb; 
+    }
+    
+    .form-message.message.error { 
+      background: #f8d7da; 
+      color: #721c24; 
+      border: 1px solid #f5c6cb; 
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .order-wrapper { 
+        grid-template-columns: 1fr; 
+      }
+      
+      .order-form-card { 
+        order: 2; 
+      }
+      
+      .order-catalog { 
+        order: 1; 
+      }
+      
+      .map-box { 
+        height: 200px; 
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -30,6 +912,7 @@
           <li><a href="#sp_offer"><b>Special Offer</b></a></li>
           <li><a href="#reservation_tbl"><b>Reservation</b></a></li>
           <li><a href="#food_lover"><b>Menus</b></a></li>
+          <li><a href="#order_section"><b>Order</b></a></li>
           <li><a href="#footer"><b>Contact</b></a></li>
         </nav>
         <div class="btn">
@@ -44,7 +927,7 @@
   <main id="showcase">
     <div class="container">
       <div class="content">
-        <img src="./images/full.jpg " alt="Background">
+        <img src="./images/full.jpg" alt="Restaurant Interior">
         <h2>SURPRISE YOUR PLATE</h2>
         <h3>Fine Food + Drinks</h3>
       </div>
@@ -64,7 +947,7 @@
 
           <div class="imgs_content">
             <div class="imgs">
-              <img src="./images/bar.jpg" alt="Menu Image">
+              <img src="./images/bar.jpg" alt="Pring Veg & Pasta">
               <div class="content_for_img">
                 <h4>Pring Veg & Pasta</h4>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
@@ -75,7 +958,7 @@
 
           <div class="imgs_content">
             <div class="imgs">
-              <img src="./images/seats.jpg" alt="Menu Image">
+              <img src="./images/seats.jpg" alt="Chicken Veg & Pasta">
               <div class="content_for_img">
                 <h4>Chicken Veg & Pasta</h4>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
@@ -86,7 +969,7 @@
 
           <div class="imgs_content">
             <div class="imgs">
-              <img src="./images/seats2.jpg" alt="Menu Image">
+              <img src="./images/seats2.jpg" alt="Seafood & Pasta">
               <div class="content_for_img">
                 <h4>Seafood & Pasta</h4>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
@@ -98,9 +981,9 @@
 
         <div class="right_side_content">
           <div class="img_right_side">
-            <img src="./images/seats3.jpg" alt="Right Side Image">
+            <img src="./images/seats3.jpg" alt="Restaurant Menu">
             <div class="over_img">
-              <a href="#"><h2>Menus</h2></a>
+              <a href="#food_lover"><h2>Menus</h2></a>
             </div>
           </div>
         </div>
@@ -115,54 +998,24 @@
       <div class="form_data">
         <h3 class="normal_heading">Your Table</h3>
         <h2 class="main_heading">Reservation Now..</h2>
-        <form action="#">
-          <input type="text" placeholder="Name" required>
-          <input type="text" placeholder="Contact Number" required>
-          <input type="email" placeholder="Email Address" required>
-          <input type="number" placeholder="Number of Person" required>
-          <input type="date" placeholder="Book Date" required>
-          <input type="time" placeholder="Your Time" required>
-          <textarea cols="10" rows="10" placeholder="Message Request"></textarea>
-          <button type="button">Book Now</button>
+        
+        <!-- Message display area -->
+        <div id="form-message"></div>
+        
+        <form id="reservation-form">
+          <input type="text" placeholder="Name" id="name" required>
+          <input type="tel" placeholder="Phone Number" id="phone" required>
+          <input type="email" placeholder="Email Address" id="email" required>
+          <input type="number" placeholder="Number of Person" id="persons" min="1" required>
+          <input type="date" placeholder="Book Date" id="date" required>
+          <input type="time" placeholder="Your Time" id="time" required>
+          <textarea cols="10" rows="10" placeholder="Message Request" id="message"></textarea>
+          <button type="submit">Book Now</button>
         </form>
       </div>
     </div>
   </div>
   <!-- ----------- Reservation close ----------- -->
-
-  <!-- ----------- Deal Today start ----------- -->
-  <section class="deal_today">
-    <div class="container swiper mySwiper">
-      <h3 class="normal_heading-1">Deal Today</h3>
-      <h2 class="main_heading-1">TODAY SPECIAL DISH</h2>
-
-      <div class="card_content swiper-wrapper">
-        <div class="cards swiper-slide">
-          <img src="./images/full.jpg" alt="Dish Image">
-          <h4>Pring Veg & Pasta</h4>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
-          <p class="price">Only $25</p>
-        </div>
-
-        <div class="cards swiper-slide">
-          <img src="./images/bar.jpg" alt="Dish Image">
-          <h4>Beef Steak</h4>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
-          <p class="price">Only $25</p>
-        </div>
-
-        <div class="cards swiper-slide">
-          <img src="./images/seats.jpg" alt="Dish Image">
-          <h4>Chicken Salad</h4>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis.</p>
-          <p class="price">Only $25</p>
-        </div>
-      </div>
-
-      <div class="swiper-pagination"></div>
-    </div>
-  </section>
-  <!-- ----------- Deal Today close ----------- -->
 
   <!-- ----------- Food Lover start ----------- -->
   <section id="food_lover">
@@ -172,7 +1025,7 @@
 
       <div class="food_lover_container">
         <div class="btn_container">
-          <button type="button" class="btn-cat" data-id="all">All Dishes</button>
+          <button type="button" class="btn-cat active" data-id="all">All Dishes</button>
           <button type="button" class="btn-cat" data-id="Dinner">Dinner</button>
           <button type="button" class="btn-cat" data-id="Lunch">Lunch</button>
           <button type="button" class="btn-cat" data-id="Drinks">Drinks</button>
@@ -180,25 +1033,142 @@
         </div>
 
         <div class="menus_items_container">
-          <div class="img_cards">
-            <img src="./images/full.jpg" alt="Dish">
-            <p class="price">Only $25</p>
-            <p>Chicken and Cashews</p>
+          <!-- Dinner Items -->
+          <div class="img_cards" data-category="Dinner">
+            <p class="price"> Qaynatilgan-45 000 so'm,Qovrilgan-55 000</p>
+            <p>Mol go'shti bilan xinkali</p>
           </div>
-          <div class="img_cards">
-            <img src="./images/bar.jpg" alt="Dish">
-            <p class="price">Only $25</p>
-            <p>Grilled Fish</p>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qaynatilgan-45 000,Qovrilgan-55 000</p>
+            <p>Qo'y go'shti bilan xinkali</p>
           </div>
-          <div class="img_cards">
-            <img src="./images/seats2.jpg" alt="Dish">
-            <p class="price">Only $25</p>
-            <p>Pasta Carbonara</p>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qovrilgan-75 000</p>
+            <p>Qisqichbaqalar bilan pasta</p>
           </div>
-          <div class="img_cards">
-            <img src="./images/seats3.jpg" alt="Dish">
-            <p class="price">Only $25</p>
-            <p>Salmon Rice Bowl</p>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qovrilgan-50 000</p>
+            <p>Sarimsoq, zaytun moyi va achchiq qalampir bilan spagetti</p>
+          </div>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qovrilgan-65 000</p>
+            <p>Alfredo fetyuchini (pishloqli qaymoqli sousda)</p>
+          </div>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qovrilgan-65 000</p>
+            <p>Mol go'shti bo'lagi bilan Carbonara pasta</p>
+          </div>
+          <div class="img_cards" data-category="Dinner">
+            <p class="price">Qovrilgan-65 000</p>
+            <p>Tovuq go'shti bilan chahohbili (pomidorli sousda, gruzincha)</p>
+          </div>
+  
+          <!-- Lunch Items -->
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">45 000</p>
+            <p>Texascha brisket (yumshoq pishirilgan mol go'shti, pita bilan)</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">45 000</p>
+            <p>Gruzincha mol go'shtidan shashlik</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">40 000</p>
+            <p>Gruzincha tovuq shashlik</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">50 000</p>
+            <p>Gruzincha qo'y go'shtidan shashlik</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">40 000</p>
+            <p>Gruzincha mol go'shtidan lyulya-kebab</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">35 000</p>
+            <p>Gruzincha tovuqdan lyulya-kebab</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">45 000</p>
+            <p>Gruzincha qo'y go'shtidan lyulya-kebab</p>
+          </div>
+          <div class="img_cards" data-category="Lunch">
+            <p class="price">40 000</p>
+            <p>Qo'zichoq qovurg'asi (grilda pishirilgan)</p>
+          </div>
+
+          <!-- Drinks Items -->
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">10000 so'm</p>
+            <p>Pepsi</p>
+            <p>0,250ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">10000 so'm</p>
+            <p>Pepsi zero</p>
+            <p>0,250ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">10000 so'm</p>
+            <p>Mirinda</p>
+            <p>0,250ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">10000 so'm</p>
+            <p>7up</p>
+            <p>0,250ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">15000 so'm</p>
+            <p>Chortoq</p>
+            <p>0,330ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">25000 so'm</p>
+            <p>Borjomi</p>
+            <p>0,500ml</p>
+          </div>
+          <div class="img_cards" data-category="Drinks">
+            <p class="price">15000 so'm</p>
+            <p>Adrenaline Rush</p>
+            <p>0,250ml</p>
+          </div>
+
+          <!-- Starter Items -->
+          <div class="img_cards" data-category="Starter">
+            <p class="price">40 000</p>
+            <p>Assorti gruzinskix namozok</p>
+            <p>Pxali iz svekly, baklajana, pechenogo pertsa va xumus</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">30 000 so'm</p>
+            <p>Ruletiki iz baklajanov</p>
+            <p>Tonkie lomtiki baklajana s orehovoy pastoy i travami</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">35 000 so'm</p>
+            <p>Rvanyy baklajan s chesnokom i kinzoy</p>
+            <p>Zapechyonnye baklajany s pikantnym chesnokom i svejey zelenyu</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">40 000 so'm</p>
+            <p>Grecheskiy salat</p>
+            <p>Svejie ovoshchi, syr feta, olivki va olivkovoe maslo</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">45 000 so'm</p>
+            <p>Tsezar s kuritsey</p>
+            <p>Kurinoe fayli, listya romano, xrusyashchie krutony va sous Tsezar</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">60 000 so'm</p>
+            <p>Tsezar s krevetkami</p>
+            <p>Klassicheskiy salat Tsezar s delikatnymi krevetkami</p>
+          </div>
+          <div class="img_cards" data-category="Starter">
+            <p class="price">45 000 so'm</p>
+            <p>Salat s xrusyashchimi baklajanami</p>
+            <p>Objarennye baklajany s ovoshchami va orehovoy zapravkoy</p>
           </div>
         </div>
       </div>
@@ -206,12 +1176,317 @@
   </section>
   <!-- ----------- Food Lover close ----------- -->
 
+  <!-- ================= ORDER SECTION ================= -->
+  <section id="order_section" class="order-section">
+    <div class="container">
+      <h3 class="normal_heading-1">Order Now</h3>
+      <h2 class="main_heading-1">Place Your Order</h2>
+
+      <!-- Delivery Info Section -->
+      <div class="delivery-info">
+        <h4>Delivery Details</h4>
+        <p>We deliver within a 5-mile radius. Minimum order: 50,000 so'm. Delivery fee: 10,000 so'm (free for orders over 100,000 so'm).</p>
+        <p>Delivery Hours: 11 AM–9 PM, Monday–Sunday.</p>
+      </div>
+
+      <div class="order-wrapper">
+        <!-- LEFT: catalog -->
+        <div class="order-catalog" id="order-catalog">
+          <p class="catalog-intro">Choose items — expand categories and dishes. Select quantity and options inside dish.</p>
+
+          <!-- Dinner category -->
+          <div class="order-category">
+            <button type="button" class="cat-toggle">Dinner ▾</button>
+            <div class="cat-items">
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Mol go'shti bilan xinkali | Qaynatilgan | 45 000 so'm">
+                  Qaynatilgan — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="55000" value="Mol go'shti bilan xinkali | Qovrilgan | 55 000 so'm">
+                  Qovrilgan — 55 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Qo'y go'shti bilan xinkali | Qaynatilgan | 45 000 so'm">
+                  Qaynatilgan — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="55000" value="Qo'y go'shti bilan xinkali | Qovrilgan | 55 000 so'm">
+                  Qovrilgan — 55 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="75000" value="Qisqichbaqalar bilan pasta | 75 000 so'm">
+                  Qisqichbaqalar bilan pasta — 75 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="50000" value="Sarimsoq, zaytun moyi va achchiq qalampir bilan spagetti | 50 000 so'm">
+                  Sarimsoq, zaytun moyi va achchiq qalampir bilan spagetti — 50 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="65000" value="Alfredo fetyuchini (pishloqli qaymoqli sousda) | 65 000 so'm">
+                  Alfredo fetyuchini (pishloqli qaymoqli sousda) — 65 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="65000" value="Mol go'shti bo'lagi bilan Carbonara pasta | 65 000 so'm">
+                  Mol go'shti bo'lagi bilan Carbonara pasta — 65 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="65000" value="Tovuq go'shti bilan chahohbili (pomidorli sousda, gruzincha) | 65 000 so'm">
+                  Tovuq go'shti bilan chahohbili (pomidorli sousda, gruzincha) — 65 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Lunch category -->
+          <div class="order-category">
+            <button type="button" class="cat-toggle">Lunch ▾</button>
+            <div class="cat-items">
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Texascha brisket (yumshoq pishirilgan mol go'shti, pita bilan) | 45 000 so'm">
+                  Texascha brisket (yumshoq pishirilgan mol go'shti, pita bilan) — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Gruzincha mol go'shtidan shashlik | 45 000 so'm">
+                  Gruzincha mol go'shtidan shashlik — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="40000" value="Gruzincha tovuq shashlik | 40 000 so'm">
+                  Gruzincha tovuq shashlik — 40 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="50000" value="Gruzincha qo'y go'shtidan shashlik | 50 000 so'm">
+                  Gruzincha qo'y go'shtidan shashlik — 50 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="40000" value="Gruzincha mol go'shtidan lyulya-kebab | 40 000 so'm">
+                  Gruzincha mol go'shtidan lyulya-kebab — 40 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="35000" value="Gruzincha tovuqdan lyulya-kebab | 35 000 so'm">
+                  Gruzincha tovuqdan lyulya-kebab — 35 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Gruzincha qo'y go'shtidan lyulya-kebab | 45 000 so'm">
+                  Gruzincha qo'y go'shtidan lyulya-kebab — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="40000" value="Qo'zichoq qovurg'asi (grilda pishirilgan) | 40 000 so'm">
+                  Qo'zichoq qovurg'asi (grilda pishirilgan) — 40 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Drinks category -->
+          <div class="order-category">
+            <button type="button" class="cat-toggle">Drinks ▾</button>
+            <div class="cat-items">
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="10000" value="Pepsi 0.25l | 10 000 so'm">
+                  Pepsi 0.25l — 10 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="10000" value="Pepsi Zero 0.25l | 10 000 so'm">
+                  Pepsi Zero 0.25l — 10 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="10000" value="Mirinda 0.25l | 10 000 so'm">
+                  Mirinda 0.25l — 10 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="10000" value="7up 0.25l | 10 000 so'm">
+                  7up 0.25l — 10 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="15000" value="Chortoq 0.33l | 15 000 so'm">
+                  Chortoq 0.33l — 15 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="25000" value="Borjomi 0.5l | 25 000 so'm">
+                  Borjomi 0.5l — 25 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="15000" value="Adrenaline Rush 0.25l | 15 000 so'm">
+                  Adrenaline Rush 0.25l — 15 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Starter category -->
+          <div class="order-category">
+            <button type="button" class="cat-toggle">Starter ▾</button>
+            <div class="cat-items">
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="40000" value="Assorti gruzinskix namozok (Pxali iz svekly, baklajana, pechenogo pertsa va xumus) | 40 000 so'm">
+                  Assorti gruzinskix namozok (Pxali iz svekly, baklajana, pechenogo pertsa va xumus) — 40 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="30000" value="Ruletiki iz baklajanov (Tonkie lomtiki baklajana s orehovoy pastoy i travami) | 30 000 so'm">
+                  Ruletiki iz baklajanov (Tonkie lomtiki baklajana s orehovoy pastoy i travami) — 30 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="35000" value="Rvanyy baklajan s chesnokom i kinzoy (Zapechyonnye baklajany s pikantnym chesnokom i svejey zelenyu) | 35 000 so'm">
+                  Rvanyy baklajan s chesnokom i kinzoy (Zapechyonnye baklajany s pikantnym chesnokom i svejey zelenyu) — 35 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="40000" value="Grecheskiy salat (Svejie ovoshchi, syr feta, olivki va olivkovoe maslo) | 40 000 so'm">
+                  Grecheskiy salat (Svejie ovoshchi, syr feta, olivki va olivkovoe maslo) — 40 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Tsezar s kuritsey (Kurinoe fayli, listya romano, xrusyashchie krutony va sous Tsezar) | 45 000 so'm">
+                  Tsezar s kuritsey (Kurinoe fayli, listya romano, xrusyashchie krutony va sous Tsezar) — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="60000" value="Tsezar s krevetkami (Klassicheskiy salat Tsezar s delikatnymi krevetkami) | 60 000 so'm">
+                  Tsezar s krevetkami (Klassicheskiy salat Tsezar s delikatnymi krevetkami) — 60 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+              <div class="dish-single">
+                <label>
+                  <input type="checkbox" name="order-item" data-price="45000" value="Salat s xrusyashchimi baklajanami (Objarennye baklajany s ovoshchami va orehovoy zapravkoy) | 45 000 so'm">
+                  Salat s xrusyashchimi baklajanami (Objarennye baklajany s ovoshchami va orehovoy zapravkoy) — 45 000 so'm
+                </label>
+                <input type="number" class="item-qty" min="1" value="1" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: form + map + summary -->
+        <aside class="order-form-card">
+          <form id="order-form">
+            <input id="order-name" type="text" placeholder="Your Name" required class="input">
+            <input id="order-phone" type="tel" placeholder="Phone" required class="input">
+
+            <div class="order-type">
+              <label class="radio">
+                <input type="radio" name="orderType" value="Pickup" checked> I'll pick it up
+              </label>
+              <label class="radio">
+                <input type="radio" name="orderType" value="Delivery"> Deliver to selected location
+              </label>
+            </div>
+
+            <div id="map-wrap" class="hidden">
+              <div id="map" class="map-box"></div>
+              <input id="order-address" type="text" placeholder="Selected address (or type manually)" class="input">
+              <div class="map-actions">
+                <button type="button" id="use-location" class="btn small">Use my location</button>
+                <button type="button" id="clear-marker" class="btn small ghost">Clear marker</button>
+              </div>
+              <small class="hint">Click on the map to place a marker (drag to adjust). We'll convert it to a human-readable address.</small>
+            </div>
+
+            <textarea id="order-note" placeholder="Additional notes (optional)" class="textarea"></textarea>
+
+            <div id="order-summary" class="summary">
+              <div>Items: <span id="summary-count">0</span></div>
+              <div>Total: <span id="summary-total">0</span> so'm</div>
+            </div>
+            <button type="submit" id="order-submit" >Place Order</button>
+
+            <div id="order-form-message" class="form-message"></div>
+
+          </form>
+        </aside>
+      </div>
+    </div>
+  </section>
+
   <!-- ----------- Footer start ----------- -->
   <section id="footer">
     <div class="container">
       <div class="footer_container">
         <div class="about_us">
-          <img src="./images/logo.png" alt="Logo">
+          <img src="./images/logo.png" alt="Capanna Restaurant Logo">
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias iste tempora morias quis iure facilis. <a href="#">Read More</a></p>
         </div>
 
@@ -242,7 +1517,358 @@
   <!-- ----------- Footer close ----------- -->
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
-  <script src="script.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  // =========================
+  // MOBILE MENU TOGGLE
+  // =========================
+  const menuBtn = document.querySelector('.menu-btn');
+  const closeBtn = document.querySelector('.close-btn');
+  const navigation = document.querySelector('nav');
+
+  menuBtn.addEventListener('click', () => navigation.classList.add('active'));
+  closeBtn.addEventListener('click', () => navigation.classList.remove('active'));
+
+  // =========================
+  // FORM SUBMISSION TO TELEGRAM BOT (RESERVATION)
+  // =========================
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('reservation-form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const messageDiv = document.getElementById('form-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Get values
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const persons = document.getElementById('persons').value.trim();
+      const date = document.getElementById('date').value.trim();
+      const time = document.getElementById('time').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      // Validation
+      if (!name || !phone || !email || !persons || !date || !time) {
+        showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      // Button loading state
+      const originalText = submitBtn.textContent;
+      submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
+      submitBtn.disabled = true;
+
+      // Telegram bot info
+      const botToken = '8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw';
+      const chatId = '1830045630';
+
+      const telegramMessage = `
+🆕 NEW RESERVATION REQUEST
+
+👤 Name: ${name}
+📞 Phone: ${phone}
+📧 Email: ${email}
+👥 Persons: ${persons}
+📅 Date: ${date}
+⏰ Time: ${time}
+💬 Message: ${message || 'No additional message'}
+
+📊 Sent from Capanna Restaurant Website
+`;
+
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text: telegramMessage, parse_mode: 'HTML' })
+        });
+
+        const data = await response.json();
+        if (data.ok) {
+          form.reset();
+          showMessage('✅ Your reservation has been sent successfully!', 'success');
+        } else {
+          throw new Error(data.description || 'Failed to send message.');
+        }
+      } catch (error) {
+        console.error('Error sending to Telegram:', error);
+        showMessage('❌ Failed to send reservation. Please try again or call us directly.', 'error');
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Input validation
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d+]/g, '');
+    });
+    document.getElementById('persons').addEventListener('input', function() {
+      if (this.value < 1) this.value = 1;
+      if (this.value > 20) this.value = 20;
+    });
+
+    // Message display
+    function showMessage(text, type) {
+      messageDiv.textContent = text;
+      messageDiv.className = `message ${type}`;
+      messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => { messageDiv.textContent = ''; messageDiv.className = ''; }, 5000);
+    }
+  });
+
+  // =========================
+  // MENU CATEGORY FILTERING
+  // =========================
+  const categoryButtons = document.querySelectorAll('.btn-cat');
+  const menuItems = document.querySelectorAll('.img_cards');
+
+  categoryButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      categoryButtons.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      const category = this.getAttribute('data-id');
+      menuItems.forEach(item => {
+        item.style.display = (category === 'all' || item.getAttribute('data-category') === category) ? 'block' : 'none';
+      });
+    });
+  });
+
+  // =========================
+  // HEADER SCROLL EFFECT
+  // =========================
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 100) {
+      header.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+      header.style.padding = '10px 0';
+    } else {
+      header.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+      header.style.padding = '15px 0';
+    }
+  });
+
+  // =========================
+  // CLOSE MENU WHEN LINK CLICKED
+  // =========================
+  document.querySelectorAll('nav a').forEach(link => link.addEventListener('click', () => navigation.classList.remove('active')));
+
+  // =========================
+  // ORDER SECTION FUNCTIONALITY
+  // =========================
+  document.addEventListener('DOMContentLoaded', initOrderSection);
+
+  function initOrderSection() {
+    const orderForm = document.getElementById('order-form');
+    const orderSubmit = document.getElementById('order-submit');
+    const orderMessageDiv = document.getElementById('order-form-message');
+    const mapWrap = document.getElementById('map-wrap');
+    const orderAddress = document.getElementById('order-address');
+    const useLocBtn = document.getElementById('use-location');
+    const clearMarkerBtn = document.getElementById('clear-marker');
+    const summaryCount = document.getElementById('summary-count');
+    const summaryTotal = document.getElementById('summary-total');
+
+    let map = null;
+    let marker = null;
+
+    const MIN_ORDER = 50000;
+    const DELIVERY_FEE = 10000;
+    const FREE_DELIVERY_THRESHOLD = 100000;
+
+    // Expand/collapse categories
+    document.querySelectorAll('#order_section .cat-toggle').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const items = this.nextElementSibling;
+        const isOpen = items.style.display === 'block';
+        items.style.display = isOpen ? 'none' : 'block';
+        this.textContent = isOpen ? this.textContent.replace('▴', '▾') : this.textContent.replace('▾', '▴');
+      });
+    });
+
+    // Delivery / Pickup change
+    document.querySelectorAll('input[name="orderType"]').forEach(r => {
+      r.addEventListener('change', function() {
+        if (this.value === 'Delivery') {
+          mapWrap.classList.remove('hidden');
+          if (!map) initMap();
+        } else {
+          mapWrap.classList.add('hidden');
+          if (marker) { map.removeLayer(marker); marker = null; }
+          orderAddress.value = '';
+        }
+        updateSummary();
+      });
+    });
+
+    // Initialize Leaflet map
+    function initMap() {
+      const center = [41.2995, 69.2401];
+      map = L.map('map').setView(center, 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      map.on('click', e => placeMarkerAndReverse(e.latlng));
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          map.setView([lat, lng], 15);
+          placeMarkerAndReverse({ lat, lng });
+        }, () => console.warn('Geolocation failed'));
+      }
+    }
+
+    async function placeMarkerAndReverse(latlng) {
+      if (!map) return;
+      if (marker) { marker.setLatLng(latlng); } 
+      else { marker = L.marker(latlng, { draggable: true }).addTo(map); }
+
+      marker.on('dragend', () => {
+        const ll = marker.getLatLng();
+        orderAddress.value = `Lat:${ll.lat.toFixed(6)},Lng:${ll.lng.toFixed(6)}`;
+        reverseGeocode(ll.lat, ll.lng);
+      });
+
+      orderAddress.value = `Lat:${latlng.lat.toFixed(6)},Lng:${latlng.lng.toFixed(6)}`;
+      await reverseGeocode(latlng.lat, latlng.lng);
+    }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+        const data = await res.json();
+        if (data?.display_name) orderAddress.value = data.display_name;
+      } catch { orderAddress.value = 'Please type address manually'; }
+    }
+
+    useLocBtn.addEventListener('click', () => {
+      if (!navigator.geolocation) { showOrderMessage('Geolocation not supported', 'error'); return; }
+      useLocBtn.disabled = true; useLocBtn.textContent = 'Locating...';
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude; const lng = pos.coords.longitude;
+        if (!map) initMap();
+        map.setView([lat, lng], 15);
+        placeMarkerAndReverse({ lat, lng });
+        useLocBtn.disabled = false; useLocBtn.textContent = 'Use my location';
+      }, err => {
+        showOrderMessage('Unable to get location: ' + err.message, 'error');
+        useLocBtn.disabled = false; useLocBtn.textContent = 'Use my location';
+      });
+    });
+
+    clearMarkerBtn.addEventListener('click', () => {
+      if (marker) { map.removeLayer(marker); marker = null; orderAddress.value = ''; }
+    });
+
+    // Summary update
+    document.querySelectorAll('#order_section input[name="order-item"], #order_section .item-qty').forEach(el => el.addEventListener('change', updateSummary));
+
+    function updateSummary() {
+      const selected = Array.from(document.querySelectorAll('#order_section input[name="order-item"]:checked'));
+      let count = 0, total = 0;
+      selected.forEach(el => {
+        let qty = 1;
+        const parent = el.closest('.dish-single');
+        if (parent) { const qEl = parent.querySelector('.item-qty'); if (qEl) qty = parseInt(qEl.value) || 1; }
+        const price = Number(el.dataset.price) || extractPriceFromValue(el.value) || 0;
+        count += qty; total += price * qty;
+      });
+      const orderType = document.querySelector('input[name="orderType"]:checked').value;
+      if (orderType === 'Delivery' && total < FREE_DELIVERY_THRESHOLD && total > 0) total += DELIVERY_FEE;
+      summaryCount.textContent = count;
+      summaryTotal.textContent = total.toLocaleString('en-US');
+    }
+
+    function extractPriceFromValue(val) { const m = val.match(/(\d[\d\s]*)\s*so'm$/); return m ? Number(m[1].replace(/\s+/g, '')) : 0; }
+
+    // Submit order
+    orderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const selectedEls = Array.from(document.querySelectorAll('#order_section input[name="order-item"]:checked'));
+      if (!selectedEls.length) { showOrderMessage('Select at least one item.', 'error'); return; }
+
+      const items = []; let total = 0;
+      selectedEls.forEach(el => {
+        let qty = 1;
+        const parent = el.closest('.dish-single');
+        if (parent) { const qEl = parent.querySelector('.item-qty'); if (qEl) qty = parseInt(qEl.value)||1; }
+        const price = Number(el.dataset.price)||extractPriceFromValue(el.value)||0;
+        total += price*qty; items.push({name: el.value, qty, price});
+      });
+
+      const orderType = document.querySelector('input[name="orderType"]:checked').value;
+      if (orderType==='Delivery' && total < MIN_ORDER) { showOrderMessage(`Minimum delivery: ${MIN_ORDER.toLocaleString('en-US')} so'm.`, 'error'); return; }
+
+      const name = document.getElementById('order-name').value.trim();
+      const phone = document.getElementById('order-phone').value.trim();
+      const address = orderAddress.value.trim();
+      const note = document.getElementById('order-note').value.trim();
+      if (!name || !phone) { showOrderMessage('Provide name and phone.', 'error'); return; }
+      if (orderType==='Delivery' && !address) { showOrderMessage('Select location or type address.', 'error'); return; }
+
+      if (orderType==='Delivery' && total < FREE_DELIVERY_THRESHOLD) total += DELIVERY_FEE;
+
+      const BOT_TOKEN = '8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw';
+      const CHAT_ID = '1830045630';
+      if (BOT_TOKEN==='8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw' || CHAT_ID==='1830045630') { showOrderMessage('Configure Telegram BOT_TOKEN & CHAT_ID', 'error'); return; }
+
+      const itemsText = items.map(it=>`${it.qty} x ${it.name} (${it.price.toLocaleString('en-US')} so'm)`).join('\n');
+      const deliveryFeeText = orderType==='Delivery' && total>=FREE_DELIVERY_THRESHOLD?'Free':`${DELIVERY_FEE.toLocaleString('en-US')} so'm`;
+      const telegramText = `
+🛒 NEW ORDER
+
+👤 Name: ${escapeHtml(name)}
+📞 Phone: ${escapeHtml(phone)}
+🚚 Type: ${escapeHtml(orderType)}
+${orderType==='Delivery'?`📍 Address: ${escapeHtml(address)}\n💸 Delivery Fee: ${deliveryFeeText}`:''}
+🧾 Items:
+${escapeHtml(itemsText)}
+
+💰 Total: ${total.toLocaleString('en-US')} so'm
+📝 Notes: ${escapeHtml(note||'—')}
+
+📊 Sent from Capanna Website
+`;
+
+      const orig = orderSubmit.textContent;
+      orderSubmit.innerHTML = '<span class="spinner"></span> Sending...';
+      orderSubmit.disabled = true;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ chat_id: CHAT_ID, text: telegramText, parse_mode:'HTML' })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          orderForm.reset();
+          if(marker){map.removeLayer(marker);marker=null;}
+          mapWrap.classList.add('hidden');
+          updateSummary();
+          showOrderMessage('✅ Order sent! We will contact you shortly.', 'success');
+        } else { throw new Error(data.description||'Telegram error'); }
+      } catch(err) { console.error('Send error',err); showOrderMessage('❌ Failed to send order. Try again or call us.', 'error'); }
+      finally { orderSubmit.innerHTML=orig; orderSubmit.disabled=false; }
+    });
+
+    function showOrderMessage(text,type){
+      orderMessageDiv.textContent=text;
+      orderMessageDiv.className=`form-message message ${type}`;
+      if(type==='success'){ setTimeout(()=>{ orderMessageDiv.textContent=''; orderMessageDiv.className='form-message'; },5000);}
+    }
+
+    function escapeHtml(str){return String(str).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+    updateSummary();
+  }
+</script>
+
 </body>
 </html>
