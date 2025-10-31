@@ -30,13 +30,13 @@
 
       // Validation
       if (!name || !phone || !email || !persons || !date || !time) {
-        showMessage('Please fill in all required fields.', 'error');
+        showMessage("Iltimos bu yerni to'ldiring.", 'error');
         return;
       }
 
       // Button loading state
       const originalText = submitBtn.textContent;
-      submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
+      submitBtn.innerHTML = '<span class="spinner"></span> Yuborilyapti...';
       submitBtn.disabled = true;
 
       // Telegram bot info
@@ -44,17 +44,17 @@
       const chatId = '1830045630';
 
       const telegramMessage = `
-🆕 NEW RESERVATION REQUEST
+🆕 Yangi so'rovnoma
 
-👤 Name: ${name}
-📞 Phone: ${phone}
+👤 Ism: ${name}
+📞 Tel raqam: ${phone}
 📧 Email: ${email}
-👥 Persons: ${persons}
-📅 Date: ${date}
-⏰ Time: ${time}
-💬 Message: ${message || 'No additional message'}
+👥 Odamlar: ${persons}
+📅 Kun: ${date}
+⏰ Vaqt: ${time}
+💬 Xabar: ${message || 'Hech narsa'}
 
-📊 Sent from Capanna Restaurant Website
+📊 Capanna veb sahifasidan yuborildi
 `;
 
       try {
@@ -67,13 +67,13 @@
         const data = await response.json();
         if (data.ok) {
           form.reset();
-          showMessage('✅ Your reservation has been sent successfully!', 'success');
+          showMessage("✅ Sizning so'rovingiz muvoffiqayiyatli yuborildi!", 'success');
         } else {
-          throw new Error(data.description || 'Failed to send message.');
+          throw new Error(data.description || "Yuborilmadi.");
         }
       } catch (error) {
-        console.error('Error sending to Telegram:', error);
-        showMessage('❌ Failed to send reservation. Please try again or call us directly.', 'error');
+        console.error('Telegramga yuborilmadi:', error);
+        showMessage('❌ Band qilinmadi. Iltimos, yana urinib ko‘ring yoki bizga telefon orqali murojaat qiling..', 'error');
       } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
@@ -295,27 +295,27 @@
 
       const BOT_TOKEN = '8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw';
       const CHAT_ID = '1830045630';
-      
+
       const itemsText = items.map(it=>`${it.qty} x ${it.name} (${it.price.toLocaleString('en-US')} so'm)`).join('\n');
       const deliveryFeeText = orderType==='Delivery' && total>=FREE_DELIVERY_THRESHOLD?'Free':`${DELIVERY_FEE.toLocaleString('en-US')} so'm`;
       const telegramText = `
-🛒 NEW ORDER
+🛒 Yangi buyurtma
 
-👤 Name: ${escapeHtml(name)}
-📞 Phone: ${escapeHtml(phone)}
-🚚 Type: ${escapeHtml(orderType)}
-${orderType==='Delivery'?`📍 Address: ${escapeHtml(address)}\n💸 Delivery Fee: ${deliveryFeeText}`:''}
+👤 Ism: ${escapeHtml(name)}
+📞 Tel raqam: ${escapeHtml(phone)}
+🚚 Tur: ${escapeHtml(orderType)}
+${orderType==='Delivery'?`📍 Manzil: ${escapeHtml(address)}\n💸 yetkazish haqqi: ${deliveryFeeText}`:''}
 🧾 Items:
 ${escapeHtml(itemsText)}
 
-💰 Total: ${total.toLocaleString('en-US')} so'm
-📝 Notes: ${escapeHtml(note||'—')}
+💰 Jami: ${total.toLocaleString('en-US')} so'm
+📝 Izohlar: ${escapeHtml(note||'—')}
 
-📊 Sent from Capanna Website
+📊 Capanna Websitedan yuborildi
 `;
 
       const orig = orderSubmit.textContent;
-      orderSubmit.innerHTML = '<span class="spinner"></span> Sending...';
+      orderSubmit.innerHTML = '<span class="spinner"></span> Yuborilmoqda...';
       orderSubmit.disabled = true;
 
       try {
@@ -330,9 +330,9 @@ ${escapeHtml(itemsText)}
           if(marker){map.removeLayer(marker);marker=null;}
           mapWrap.classList.add('hidden');
           updateSummary();
-          showOrderMessage('✅ Order sent! We will contact you shortly.', 'success');
+          showOrderMessage(" Buyurtma yuborildi. Siz bilan bog'lanamiz", 'success');
         } else { throw new Error(data.description||'Telegram error'); }
-      } catch(err) { console.error('Send error',err); showOrderMessage('❌ Failed to send order. Try again or call us.', 'error'); }
+      } catch(err) { console.error('Send error',err); showOrderMessage('❌ Buyurtmani yuborib bo‘lmadi. Iltimos, yana urinib ko‘ring yoki bizga qo‘ng‘iroq qiling..', 'error'); }
       finally { orderSubmit.innerHTML=orig; orderSubmit.disabled=false; }
     });
 
