@@ -295,8 +295,7 @@
 
       const BOT_TOKEN = '8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw';
       const CHAT_ID = '1830045630';
-      if (BOT_TOKEN==='8490496219:AAGY_nNT8VlSnveJUzkJsUxE3s726XizBhw' || CHAT_ID==='1830045630') { showOrderMessage('Configure Telegram BOT_TOKEN & CHAT_ID', 'error'); return; }
-
+      
       const itemsText = items.map(it=>`${it.qty} x ${it.name} (${it.price.toLocaleString('en-US')} so'm)`).join('\n');
       const deliveryFeeText = orderType==='Delivery' && total>=FREE_DELIVERY_THRESHOLD?'Free':`${DELIVERY_FEE.toLocaleString('en-US')} so'm`;
       const telegramText = `
