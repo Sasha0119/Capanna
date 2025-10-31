@@ -315,7 +315,7 @@
 
     .normal_heading-1 {
       font-size: 18px;
-      color: #289e69;
+      color: #c9a96e;
       text-transform: uppercase;
       letter-spacing: 1px;
       text-align: center;
@@ -345,9 +345,9 @@
     }
 
     .btn-cat:hover, .btn-cat.active {
-      background-color: #289e69;
+      background-color: #c9a96e;
       color: #fff;
-      border-color: #289e69;
+      border-color: #c9a96e;
     }
 
    .menus_items_container {
@@ -382,7 +382,7 @@
 
 .img_cards .price {
   align-self: flex-start; /* Moves the price to the left side */
-  background-color: #289e69;
+  background-color: #c9a96e;
   color: #fff;
   padding: 5px 5px;
   border-radius: 12px;
