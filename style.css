@@ -70,7 +70,7 @@
 
     .btns {
       padding: 10px 18px;
-      color: #c9a96e;
+      color: #ffffff;
       text-decoration: none;
       border-radius: 15px;
       transition: 0.3s;
@@ -903,4 +903,5 @@
         height: 200px; 
       }
     }
+
 
